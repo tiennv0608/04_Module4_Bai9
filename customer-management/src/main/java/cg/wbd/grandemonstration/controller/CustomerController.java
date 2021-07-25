@@ -4,6 +4,7 @@ import cg.wbd.grandemonstration.model.Customer;
 import cg.wbd.grandemonstration.model.Province;
 import cg.wbd.grandemonstration.service.CustomerService;
 import cg.wbd.grandemonstration.service.ProvinceService;
+import exception.DuplicateEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -50,9 +51,14 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ModelAndView updateCustomer(Customer customer) {
+    public ModelAndView updateCustomer(Customer customer) throws DuplicateEmailException {
         customerService.save(customer);
         return new ModelAndView("redirect:/customers");
+    }
+
+    @ExceptionHandler(DuplicateEmailException.class)
+    public ModelAndView showErrorPage() {
+        return new ModelAndView("/customers/error");
     }
 
     private Page<Customer> getPage(Pageable pageInfo) {
